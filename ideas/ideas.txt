@@ -1,7 +1,7 @@
 1. How have actor/actress popularity changed over time? Have the same actors/actresses been popular through the years?
     a. Popularity can be measured through the movie's vote_average, revenue_adj, or popularity (maybe create one score based off of these)
     b. Will need to write a Python script to break the cast column into separate rows for each actor
-    c. import fields: actor name, original title, popularity, release date, release year, vote average, revenue adj
+    c. important fields: actor name, original title, popularity, release date, release year, vote average, revenue adj
 
 2. Best Actor/Actress duo's. Which pair of actor's like to work on the same movie's together and which pair creates the most popular movies?
 
