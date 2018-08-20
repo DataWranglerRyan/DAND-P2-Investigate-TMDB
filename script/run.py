@@ -1,33 +1,18 @@
-import pandas as pd
+import matplotlib.pyplot as plt
+from models.the_movie_database import TheMovieDatabase
 
-req_index = ['id', 'original_title', 'popularity', 'release_year']
-req_cols = ['original_title', 'cast', 'popularity', 'release_year']
-df = pd.read_csv('../data/tmdb-movies.csv', index_col=req_index)
-# print(df)
+tmdb = TheMovieDatabase('../data/tmdb-movies.csv')
+actor_df = tmdb.get_actor_metrics()
+print(actor_df)
+actor_df.plot.scatter(x='career_length', y='vote_average')
+plt.show()
 
+# locations = [1, 2, 3, 4]
+# height = [10, 20, 30, 40]
+# labels = ['High', 'Moderately High', 'Medium', 'Low']
+# f = plt.figure()
+# plt.plot(locations, height, 'go-', label='line 1')
+# plt.show()
+# f.savefig("../figures/foo.pdf", bbox_inches='tight')
 
-df2 = df.loc[[135397, 76341, 291270], req_cols]
-df2['cast'] = df2.cast.apply(lambda x: x.split('|'))
-v = pd.melt(df2.cast.apply(pd.Series).reset_index())
-print(v)
-df_final = pd.melt(df2.cast.apply(pd.Series).reset_index(),
-        id_vars=req_index,
-        value_name='actor').set_index('id')
-df_final = df_final.drop('variable', axis=1).dropna().sort_index()
-print(df_final)
 print('done')
-
-# df = (pd.DataFrame({'name': ['A.J. Price'] * 3,
-#                     'opponent': ['76ers', 'blazers', 'bobcats'],
-#                     'nearest_neighbors': [['Zach LaVine', 'Jeremy Lin', 'Nate Robinson', 'Isaia']] * 3})
-#       .set_index(['name', 'opponent']))
-# print(pd.melt(df.nearest_neighbors.apply(pd.Series).reset_index(),
-#              id_vars=['name', 'opponent'],
-#              value_name='nearest_neighbors')
-#      .set_index(['name', 'opponent'])
-#      .drop('variable', axis=1)
-#      .dropna()
-#      .sort_index()
-#      )
-
-# print(df.nearest_neighbors.apply(pd.Series))
