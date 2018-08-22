@@ -17,6 +17,7 @@ class TheMovieDatabase(object):
         for i in range(len(self.chart_colors)):
             r, g, b = self.chart_colors[i]
             self.chart_colors[i] = (r / 255., g / 255., b / 255.)
+        self.chart_style = 'seaborn'
 
     def __explode_cast(self):
         """
@@ -25,7 +26,6 @@ class TheMovieDatabase(object):
         :return: Dataframe where each actor in a movie has their own row.
         """
         columns_to_explode = ['cast']
-        # [135397, 118340, 76341, 291270, 97367, 109439]
         cast_df = self.df_orig.loc[:, columns_to_explode]
         cast_df['cast'] = cast_df.cast.apply(lambda x: str(x).split('|'))
         exploded_cast_df = pd.melt(cast_df.cast.apply(pd.Series).reset_index(),
@@ -52,12 +52,11 @@ class TheMovieDatabase(object):
             'release_year_dup': 'max'
         }
         self.df['release_year_dup'] = self.df['release_year']
-        # ['release_year', 'actor']
         actor_stats_df = self.df.groupby(['actor'], as_index=False)\
             .agg(agg_functions).rename(columns=rename_col).sort_values('number_of_movies', ascending=False)
         return actor_stats_df
 
-    def get_career_len_mean(self):
+    def get_avg_rating_by_career_len(self):
         df = self.get_actor_metrics()
         # Create actor career length column
         df['career_length'] = df['last_year'] - df['first_year']
@@ -67,9 +66,71 @@ class TheMovieDatabase(object):
         df['career_length_bin'] = pd.cut(df['career_length'], bin_edges, labels=bin_names)
         return df.groupby('career_length_bin', as_index=False)['vote_average'].mean()
 
-    def plot_career_len_mean(self):
-        self.get_career_len_mean().plot.bar(x='career_length_bin', y='vote_average', ylim=5, color=self.chart_colors[0])
-        plt.savefig("../figures/foo.pdf", bbox_inches='tight')
+    def plot_avg_rating_by_career_len(self, save=False):
+        plt.style.use(self.chart_style)
+        self.get_avg_rating_by_career_len().plot.bar(x='career_length_bin', y='vote_average', ylim=5,
+                                            color=self.chart_colors[0], legend=False)
+        ax = plt.subplot(111)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        plt.title('Do actors/actresses with longer careers\n produce movies with higher ratings?', fontsize=14)
+        plt.xlabel('Career Length (years)', fontsize=10, alpha=0.7)
+        plt.ylabel('Average Movie Rating', fontsize=10, alpha=0.7)
+        if save:
+            plt.savefig("../figures/avg_rating_by_career_len.pdf", bbox_inches='tight')
         plt.show()
 
+    def get_avg_rating_by_movie_exp(self):
+        df = self.get_actor_metrics()
+        # Create bins for movie experience
+        bin_edges = [0, 5, 10, 15, 20, 25, 30, 35, 40, 100]
+        bin_names = ['0-5', '5-10', '10-15', '15-20', '20-25', '25-30', '30-35', '35-40', '40+']
+        df['number_of_movies_bin'] = pd.cut(df['number_of_movies'], bin_edges, labels=bin_names)
+        return df.groupby('number_of_movies_bin', as_index=False)['vote_average'].mean()
 
+    def plot_avg_rating_by_movie_exp(self, save=False):
+        plt.style.use(self.chart_style)
+        self.get_avg_rating_by_movie_exp().plot.bar(x='number_of_movies_bin', y='vote_average', ylim=5,
+                                            color=self.chart_colors[5], legend=False)
+        ax = plt.subplot(111)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        plt.title('Do experienced actors/actresses\n produce movies with higher ratings?', fontsize=14)
+        plt.xlabel('Number of Movies Starred In', fontsize=10, alpha=0.7)
+        plt.ylabel('Average Movie Rating', fontsize=10, alpha=0.7)
+        if save:
+            plt.savefig("../figures/avg_rating_by_movie_exp.pdf", bbox_inches='tight')
+        plt.show()
+
+    def get_an_actors_metrics_over_time(self, actor_name):
+        rename_col = {
+            'popularity': 'avg_popularity',
+            'id': 'number_of_movies'
+        }
+        agg_functions = {
+            'popularity': 'mean',
+            'id': 'count',
+            'vote_average': 'mean',
+            'vote_count': 'sum',
+            'revenue_adj': 'mean'
+        }
+        actor_stats_df = self.df.groupby(['release_year', 'actor'], as_index=False)\
+            .agg(agg_functions).rename(columns=rename_col).sort_values('release_year', ascending=False)
+        actor_stats_df = actor_stats_df[actor_stats_df.actor == actor_name]
+        if not actor_stats_df.shape[0]:
+            print('Warning: {} does not exist in table.'.format(actor_name))
+        return actor_stats_df
+
+    def plot_an_actors_avg_ratings_over_time(self, actor_name, save=False):
+        plt.style.use(self.chart_style)
+        self.get_an_actors_metrics_over_time(actor_name).plot.line(x='release_year', y='vote_average',
+                                                                   color=self.chart_colors[8], legend=False)
+        ax = plt.subplot(111)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        plt.title("How has {}'s average movie ratings fared over time?".format(actor_name), fontsize=14)
+        plt.xlabel('Release Year of Movie', fontsize=10, alpha=0.7)
+        plt.ylabel('Average Movie Rating', fontsize=10, alpha=0.7)
+        if save:
+            plt.savefig("../figures/actor_career_over_time.pdf", bbox_inches='tight')
+        plt.show()

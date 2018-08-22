@@ -1,14 +1,8 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
 from models.the_movie_database import TheMovieDatabase
 
+save = True
 tmdb = TheMovieDatabase('../data/tmdb-movies.csv')
-# actor_df = tmdb.get_actor_metrics()
-# print(actor_df)
-# actor_df.plot.scatter(x='career_length', y='vote_average')
-# plt.show()
-
-career_df = tmdb.get_career_len_mean()
-tmdb.plot_career_len_mean()
-print(career_df)
-print('done')
+tmdb.plot_avg_rating_by_career_len(save=save)
+tmdb.plot_avg_rating_by_movie_exp(save=save)
+tmdb.plot_an_actors_avg_ratings_over_time('Robert De Niro', save=save)
+print('Complete')

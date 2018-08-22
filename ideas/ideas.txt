@@ -3,10 +3,12 @@
     b. Will need to write a Python script to break the cast column into separate rows for each actor
     c. important fields: actor name, original title, popularity, release date, release year, vote average, revenue adj
 
-2. Best Actor/Actress duo's. Which pair of actor's like to work on the same movie's together and which pair creates the most popular movies?
+2. Have movies gotten higher ratings over time?
 
-3. Do certain words in a movies tag line translate to a more popular movie?
+3. Best Actor/Actress duo's. Which pair of actor's like to work on the same movie's together and which pair creates the most popular movies?
 
-4. What type of movie have people liked over time (based off of keywords)?
+4. Do certain words in a movies tag line translate to a more popular movie?
 
-5. What is the optimal runtime for each genre of movie?
+5. What type of movie have people liked over time (based off of keywords)?
+
+6. What is the optimal runtime for each genre of movie?
