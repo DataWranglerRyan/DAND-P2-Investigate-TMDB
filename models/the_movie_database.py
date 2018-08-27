@@ -8,6 +8,7 @@ class TheMovieDatabase(object):
                           'revenue_adj', 'vote_average', 'vote_count']
         self.df_orig = pd.read_csv(path, index_col=self.req_index)
         self.df_exploded = self.__explode_cast()
+        # These are from Tableau's color palette
         self.chart_colors = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
              (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
              (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
