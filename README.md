@@ -16,3 +16,8 @@ I have also provided the Jupyter Notebook that was used to create this report. I
 
 ## Dependencies
 This script requires the pandas library and matplotlib.
+
+## Resources
+http://www.randalolson.com/2014/06/28/how-to-make-beautiful-data-visualizations-in-python-with-matplotlib/
+https://pandas.pydata.org/pandas-docs/stable/generated/pandas.melt.html
+https://stackoverflow.com/questions/32468402/how-to-explode-a-list-inside-a-dataframe-cell-into-separate-rows
